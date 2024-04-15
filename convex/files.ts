@@ -12,8 +12,6 @@ async function hasAccessToOrg(
   const hasAccess =
     user.orgIds.includes(orgId) || user.tokenIdentifier.includes(orgId);
 
-  console.log(hasAccess);
-
   return hasAccess;
 }
 
