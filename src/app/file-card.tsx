@@ -24,8 +24,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "convex/react";
-import { MoreVertical, TrashIcon } from "lucide-react";
-import { useState } from "react";
+import {
+  FileTextIcon,
+  GanttChartIcon,
+  ImageIcon,
+  MoreVertical,
+  TrashIcon,
+} from "lucide-react";
+import Image from "next/image";
+import { ReactNode, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Doc } from "../../convex/_generated/dataModel";
 
@@ -84,18 +91,29 @@ function FileCardActions({ file }: { file: Doc<"files"> }) {
 }
 
 export default function FileCard({ file }: { file: Doc<"files"> }) {
+  const typeIcons = {
+    image: <ImageIcon />,
+    pdf: <FileTextIcon />,
+    csv: <GanttChartIcon />,
+  } as Record<Doc<"files">["type"], ReactNode>;
+
   return (
     <div>
       <Card>
         <CardHeader className="relative">
-          <CardTitle>{file.name}</CardTitle>
+          <CardTitle className="flex gap-2">
+            <div className="flex justify-center">{typeIcons[file.type]}</div>
+            {file.name}
+          </CardTitle>
           <div className="absolute top-2 right-2">
             <FileCardActions file={file} />
           </div>
           {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
         <CardContent>
-          <p>Card Content</p>
+          {file.type === "image" && (
+            <Image alt={file.name} width={200} height={100} src={""} />
+          )}
         </CardContent>
         <CardFooter>
           <Button>Download</Button>

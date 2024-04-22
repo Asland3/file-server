@@ -30,6 +30,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Doc } from "../../convex/_generated/dataModel";
 
 const formSchema = z.object({
   title: z.string().min(1).max(200),
@@ -61,16 +62,30 @@ export default function UploadButton() {
 
     const postUrl = await generateUploadUrl();
 
+    const fileType = values.file[0].type;
+
     const result = await fetch(postUrl, {
       method: "POST",
-      headers: { "Content-Type": values.file[0].type },
+      headers: { "Content-Type": fileType },
       body: values.file[0],
     });
 
     const { storageId } = await result.json();
 
+    const types = {
+      "image/jpeg": "image",
+      "image/png": "image",
+      "application/pdf": "pdf",
+      "text/csv": "csv",
+    } as Record<string, Doc<"files">["type"]>;
+
     try {
-      await createFile({ name: values.title, fileId: storageId, orgId });
+      await createFile({
+        name: values.title,
+        fileId: storageId,
+        type: types[fileType] ?? "unknown",
+        orgId,
+      });
       toast({
         variant: "success",
         title: "File uploaded",
@@ -91,7 +106,7 @@ export default function UploadButton() {
   }
 
   let orgId: string | undefined;
-  
+
   if (organization.isLoaded && user.isLoaded) {
     orgId = organization.organization?.id ?? user.user?.id;
   }
