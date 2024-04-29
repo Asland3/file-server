@@ -1,15 +1,14 @@
 "use client";
 
+import FileCard from "@/app/dashboard/files/file-card";
+import SearchBar from "@/app/dashboard/files/search-bar";
+import UploadButton from "@/app/dashboard/files/upload-button";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
-
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import FileCard from "./file-card";
-import SearchBar from "./search-bar";
-import UploadButton from "./upload-button";
+import { api } from "../../../../convex/_generated/api";
 
 function Placeholder() {
   return (
@@ -31,7 +30,7 @@ function Placeholder() {
   );
 }
 
-export default function Home() {
+export default function Files() {
   const organization = useOrganization();
   const user = useUser();
   const [query, setQuery] = useState("");
@@ -45,7 +44,7 @@ export default function Home() {
   const isLoading = files === undefined;
 
   return (
-    <main className="container mx-auto pt-14">
+    <div>
       {isLoading && (
         <div className="flex flex-col gap-8 w-full items-center mt-24">
           <Loader2 className="animate-spin h-12 w-12" />
@@ -71,6 +70,6 @@ export default function Home() {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }

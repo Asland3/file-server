@@ -33,8 +33,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { ReactNode, useState } from "react";
-import { api } from "../../convex/_generated/api";
-import { Doc } from "../../convex/_generated/dataModel";
+import { api } from "../../../../convex/_generated/api";
+import { Doc } from "../../../../convex/_generated/dataModel";
 
 function FileCardActions({ file }: { file: Doc<"files"> }) {
   const deleteFile = useMutation(api.files.deleteFile);
@@ -117,13 +117,15 @@ export default function FileCard({ file }: { file: Doc<"files"> }) {
 
           {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
           {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
-
-
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button onClick={() => {
-            window.open(getFileUrl(file._id), "_blank");
-          }}>Download</Button>
+          <Button
+            onClick={() => {
+              window.open(getFileUrl(file._id), "_blank");
+            }}
+          >
+            Download
+          </Button>
         </CardFooter>
       </Card>
     </div>
