@@ -80,8 +80,6 @@ export const getFiles = query({
       return [];
     }
 
-    
-
     return ctx.db
       .query("files")
       .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
