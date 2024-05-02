@@ -34,6 +34,7 @@ import {
   StarHalf,
   StarIcon,
   TrashIcon,
+  UndoIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { ReactNode, useState } from "react";
@@ -48,6 +49,7 @@ function FileCardActions({
   isFavorited: boolean;
 }) {
   const deleteFile = useMutation(api.files.deleteFile);
+  const restoreFile = useMutation(api.files.restoreFile);
   const toggleFavorite = useMutation(api.files.toggleFavorite);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const { toast } = useToast();
@@ -56,10 +58,10 @@ function FileCardActions({
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action will mark the file for deletion. You can restore it
+              later.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -106,7 +108,10 @@ function FileCardActions({
           <Protect
             role="org:admin"
             fallback={
-              <DropdownMenuItem className="flex gap-1 text-red-600 items-center cursor-not-allowed" disabled>
+              <DropdownMenuItem
+                className="flex gap-1 text-red-600 items-center cursor-not-allowed"
+                disabled
+              >
                 <TrashIcon />
                 Delete
               </DropdownMenuItem>
@@ -114,12 +119,28 @@ function FileCardActions({
           >
             <DropdownMenuItem
               onClick={() => {
-                setIsConfirmOpen(true);
+                if (file.shouldDelete) {
+                  restoreFile({ fileId: file._id });
+                  toast({
+                    variant: "success",
+                    title: "File Restored",
+                    description: "Your file has been restored successfully",
+                  });
+                } else {
+                  setIsConfirmOpen(true);
+                }
               }}
-              className="flex gap-1 text-red-600 items-center cursor-pointer"
+              className="flex gap-1 items-center cursor-pointer"
             >
-              <TrashIcon />
-              Delete
+              {file.shouldDelete ? (
+                <div className="flex gap-1 text-green-600 items-center cursor-pointer">
+                  <UndoIcon /> Restore
+                </div>
+              ) : (
+                <div className="flex gap-1 text-red-600 items-center cursor-pointer">
+                  <TrashIcon /> Delete
+                </div>
+              )}
             </DropdownMenuItem>
           </Protect>
         </DropdownMenuContent>
