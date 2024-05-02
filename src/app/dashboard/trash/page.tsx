@@ -1,4 +1,4 @@
-import FileBrowser from "../_components/file-browser";
+import { FileBrowser } from "../_components/file-browser";
 
 function Trash() {
   return (

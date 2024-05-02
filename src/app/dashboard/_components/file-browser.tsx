@@ -1,41 +1,45 @@
 "use client";
-
-import FileCard from "@/app/dashboard/_components/file-card";
-import SearchBar from "@/app/dashboard/_components/search-bar";
-import UploadButton from "@/app/dashboard/_components/upload-button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { Loader2 } from "lucide-react";
+import { GridIcon, Loader2, RowsIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
-import { DataTable } from "./file-table";
+import { Doc } from "../../../../convex/_generated/dataModel";
 import { columns } from "./columns";
+import { FileCard } from "./file-card";
+import { DataTable } from "./file-table";
+import SearchBar from "./search-bar";
+import UploadButton from "./upload-button";
 
 function Placeholder() {
   return (
-    <div className="flex flex-col w-full items-center pt-10">
-      <h1 className="text-3xl font-bold">No files found</h1>
-
-      <p className="text-gray-500 mb-10">
-        You can upload files using the button below
-      </p>
-      <UploadButton />
+    <div className="flex flex-col gap-8 w-full items-center mt-24">
       <Image
-        className="mt-10"
-        alt="Image of no files"
-        width={400}
-        height={400}
-        src={"/no-Image.svg"}
+        alt="an image of a picture and directory icon"
+        width="300"
+        height="300"
+        src="/no-Image.svg"
       />
+      <div className="text-2xl">You have no files, upload one now</div>
+      <UploadButton />
     </div>
   );
 }
 
-export default function FileBrowser({
+export function FileBrowser({
   title,
   favoritesOnly,
-  deletedOnly
+  deletedOnly,
 }: {
   title: string;
   favoritesOnly?: boolean;
@@ -44,6 +48,7 @@ export default function FileBrowser({
   const organization = useOrganization();
   const user = useUser();
   const [query, setQuery] = useState("");
+  const [type, setType] = useState<Doc<"files">["type"] | "all">("all");
 
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded) {
@@ -57,45 +62,89 @@ export default function FileBrowser({
 
   const files = useQuery(
     api.files.getFiles,
-    orgId ? { orgId, query, favorites: favoritesOnly, deletedOnly } : "skip"
+    orgId
+      ? {
+          orgId,
+          type: type === "all" ? undefined : type,
+          query,
+          favorites: favoritesOnly,
+          deletedOnly,
+        }
+      : "skip"
   );
   const isLoading = files === undefined;
 
+  const modifiedFiles =
+    files?.map((file) => ({
+      ...file,
+      isFavorited: (favorites ?? []).some(
+        (favorite) => favorite.fileId === file._id
+      ),
+    })) ?? [];
+
   return (
     <div>
-      {isLoading && (
-        <div className="flex flex-col gap-8 w-full items-center mt-24">
-          <Loader2 className="animate-spin h-12 w-12" />
-          <div className="text-2xl">Loading your images...</div>
-        </div>
-      )}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">{title}</h1>
 
-      {!isLoading && (
-        <>
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">{title}</h1>
-            <SearchBar query={query} setQuery={setQuery} />
+        <SearchBar query={query} setQuery={setQuery} />
 
-            <UploadButton />
+        <UploadButton />
+      </div>
+
+      <Tabs defaultValue="grid">
+        <div className="flex justify-between items-center">
+          <TabsList className="mb-2">
+            <TabsTrigger value="grid" className="flex gap-2 items-center">
+              <GridIcon />
+              Grid
+            </TabsTrigger>
+            <TabsTrigger value="table" className="flex gap-2 items-center">
+              <RowsIcon /> Table
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="type-select">Type Filter</Label>
+            <Select
+              value={type}
+              onValueChange={(newType: any) => {
+                setType(newType);
+              }}
+            >
+              <SelectTrigger id="type-select" className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="image">Image</SelectItem>
+                <SelectItem value="csv">CSV</SelectItem>
+                <SelectItem value="pdf">PDF</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+        </div>
 
-          {files.length === 0 && <Placeholder />}
+        {isLoading && (
+          <div className="flex flex-col gap-8 w-full items-center mt-24">
+            <Loader2 className="h-32 w-32 animate-spin text-gray-500" />
+            <div className="text-2xl">Loading your files...</div>
+          </div>
+        )}
 
-          <DataTable columns={columns} data={files} />
-
-          <div className="grid grid-cols-4 gap-4">
-            {files?.map((file) => {
-              return (
-                <FileCard
-                  favorites={favorites ?? []}
-                  key={file._id}
-                  file={file}
-                />
-              );
+        <TabsContent value="grid">
+          <div className="grid grid-cols-3 gap-4">
+            {modifiedFiles?.map((file) => {
+              return <FileCard key={file._id} file={file} />;
             })}
           </div>
-        </>
-      )}
+        </TabsContent>
+        <TabsContent value="table">
+          <DataTable columns={columns} data={modifiedFiles} />
+        </TabsContent>
+      </Tabs>
+
+      {files?.length === 0 && <Placeholder />}
     </div>
   );
 }
