@@ -1,5 +1,4 @@
 import { httpRouter } from "convex/server";
-
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 
@@ -36,7 +35,17 @@ http.route({
           await ctx.runMutation(internal.users.addOrgIdToUser, {
             tokenIdentifier: `https://sharp-redbird-95.clerk.accounts.dev|${result.data.public_user_data.user_id}`,
             orgId: result.data.organization.id,
+            role: result.data.role === "org:admin" ? "admin" : "member",
           });
+          break;
+
+          case "organizationMembership.updated":
+            await ctx.runMutation(internal.users.updateRoleInOrgForUser, {
+              tokenIdentifier: `https://sharp-redbird-95.clerk.accounts.dev|${result.data.public_user_data.user_id}`,
+              orgId: result.data.organization.id,
+              role: result.data.role === "org:admin" ? "admin" : "member",
+            });
+            break;
       }
 
       return new Response(null, {

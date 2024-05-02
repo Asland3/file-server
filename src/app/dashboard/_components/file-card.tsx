@@ -106,7 +106,7 @@ function FileCardActions({
           <Protect
             role="org:admin"
             fallback={
-              <DropdownMenuItem className="flex gap-1 text-red-600 items-center cursor-not-allowed">
+              <DropdownMenuItem className="flex gap-1 text-red-600 items-center cursor-not-allowed" disabled>
                 <TrashIcon />
                 Delete
               </DropdownMenuItem>
