@@ -83,7 +83,14 @@ export const getFiles = query({
       );
     }
 
-    return files;
+    const filesWithUrl = await Promise.all(
+      files.map(async (file) => ({
+        ...file,
+        url: await ctx.storage.getUrl(file.fileId),
+      }))
+    );
+
+    return filesWithUrl;
   },
 });
 

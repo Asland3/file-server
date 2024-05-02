@@ -121,7 +121,7 @@ export default function FileCard({
   file,
   favorites,
 }: {
-  file: Doc<"files">;
+  file: Doc<"files"> & { url: string | null };
   favorites: Doc<"favorites">[];
 }) {
   const typeIcons = {
@@ -148,8 +148,8 @@ export default function FileCard({
           {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
         <CardContent className="h-[200px] flex justify-center items-center">
-          {file.type === "image" && (
-            <Image alt={file.name} width={200} height={100} src={""} />
+          {file.type === "image" && file.url && (
+            <Image alt={file.name} width="200" height="100" src={file.url} />
           )}
 
           {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
@@ -158,7 +158,8 @@ export default function FileCard({
         <CardFooter className="flex justify-center">
           <Button
             onClick={() => {
-              window.open(getFileUrl(file._id), "_blank");
+              if (!file.url) return;
+              window.open(file.url, "_blank");
             }}
           >
             Download
