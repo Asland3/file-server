@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
+import { Protect } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import {
   FileTextIcon,
@@ -102,15 +103,25 @@ function FileCardActions({
             )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              setIsConfirmOpen(true);
-            }}
-            className="flex gap-1 text-red-600 items-center cursor-pointer"
+          <Protect
+            role="org:admin"
+            fallback={
+              <DropdownMenuItem className="flex gap-1 text-red-600 items-center cursor-not-allowed">
+                <TrashIcon />
+                Delete
+              </DropdownMenuItem>
+            }
           >
-            <TrashIcon />
-            Delete
-          </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setIsConfirmOpen(true);
+              }}
+              className="flex gap-1 text-red-600 items-center cursor-pointer"
+            >
+              <TrashIcon />
+              Delete
+            </DropdownMenuItem>
+          </Protect>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
+import { Id } from "./_generated/dataModel";
 import { MutationCtx, QueryCtx, mutation, query } from "./_generated/server";
 import { fileTypes } from "./schema";
-import { Id } from "./_generated/dataModel";
 
 export const generateUploadUrl = mutation(async (ctx) => {
   const identity = await ctx.auth.getUserIdentity();
@@ -20,6 +20,7 @@ export const createFile = mutation({
     orgId: v.string(),
     type: fileTypes,
   },
+
   async handler(ctx, args) {
     const hasAccess = await hasAccessToOrg(ctx, args.orgId);
 
@@ -154,7 +155,7 @@ export const getAllFavorites = query({
       )
       .collect();
 
-      return favorites
+    return favorites;
   },
 });
 

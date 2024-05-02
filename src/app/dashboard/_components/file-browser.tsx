@@ -24,7 +24,7 @@ function Placeholder() {
         alt="Image of no files"
         width={400}
         height={400}
-        src={"files-and-folder-90.svg"}
+        src={"/no-Image.svg"}
       />
     </div>
   );
