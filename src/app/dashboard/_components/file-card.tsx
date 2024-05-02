@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
   CardContent,
@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { Protect } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { formatRelative } from "date-fns";
 import {
   FileTextIcon,
   GanttChartIcon,
@@ -51,8 +52,11 @@ function FileCardActions({
   const deleteFile = useMutation(api.files.deleteFile);
   const restoreFile = useMutation(api.files.restoreFile);
   const toggleFavorite = useMutation(api.files.toggleFavorite);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   const { toast } = useToast();
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   return (
     <>
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
@@ -88,6 +92,7 @@ function FileCardActions({
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem></DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               toggleFavorite({ fileId: file._id });
@@ -156,6 +161,9 @@ export default function FileCard({
   file: Doc<"files"> & { url: string | null };
   favorites: Doc<"favorites">[];
 }) {
+  const userProfile = useQuery(api.users.getUserProfile, {
+    userId: file.userId,
+  });
   const typeIcons = {
     image: <ImageIcon />,
     pdf: <FileTextIcon />,
@@ -170,14 +178,13 @@ export default function FileCard({
     <div>
       <Card>
         <CardHeader className="relative">
-          <CardTitle className="flex gap-2">
+          <CardTitle className="flex gap-2 pb-4 text-base font-normal">
             <div className="flex justify-center">{typeIcons[file.type]}</div>
-            {file.name}
+            <p className="truncate">{file.name}</p>
           </CardTitle>
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-3 right-2">
             <FileCardActions isFavorited={isFavorited} file={file} />
           </div>
-          {/* <CardDescription>Card Description</CardDescription> */}
         </CardHeader>
         <CardContent className="h-[200px] flex justify-center items-center">
           {file.type === "image" && file.url && (
@@ -187,15 +194,17 @@ export default function FileCard({
           {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
           {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <Button
-            onClick={() => {
-              if (!file.url) return;
-              window.open(file.url, "_blank");
-            }}
-          >
-            Download
-          </Button>
+        <CardFooter className="flex justify-between pt-4">
+          <div className="flex gap-2 text-xs text-gray-700 w-40 items-center">
+            <Avatar className="w-6 h-6">
+              <AvatarImage src={userProfile?.image} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            {userProfile?.name}
+          </div>
+          <div className="text-xs text-gray-700">
+            Uploaded {formatRelative(new Date(file._creationTime), new Date())}
+          </div>
         </CardFooter>
       </Card>
     </div>
