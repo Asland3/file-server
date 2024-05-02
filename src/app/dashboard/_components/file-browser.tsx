@@ -9,6 +9,8 @@ import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
+import { DataTable } from "./file-table";
+import { columns } from "./columns";
 
 function Placeholder() {
   return (
@@ -78,6 +80,8 @@ export default function FileBrowser({
           </div>
 
           {files.length === 0 && <Placeholder />}
+
+          <DataTable columns={columns} data={files} />
 
           <div className="grid grid-cols-4 gap-4">
             {files?.map((file) => {
