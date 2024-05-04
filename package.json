@@ -30,6 +30,7 @@
     "eslint": "^8.57.0",
     "lucide-react": "^0.368.0",
     "next": "^14.2.1",
+    "nextjs-toploader": "^1.6.12",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.3",

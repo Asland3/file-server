@@ -223,8 +223,10 @@ export const toggleFavorite = mutation({
         userId: access.user._id,
         orgId: access.file.orgId,
       });
+      return "added"
     } else {
       await ctx.db.delete(favorite._id);
+      return "removed"
     }
   },
 });

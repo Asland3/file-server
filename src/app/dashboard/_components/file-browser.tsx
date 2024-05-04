@@ -10,7 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { GridIcon, Loader2, RowsIcon } from "lucide-react";
+import { GridIcon, RowsIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
@@ -124,13 +124,6 @@ export function FileBrowser({
             </Select>
           </div>
         </div>
-
-        {isLoading && (
-          <div className="flex flex-col gap-8 w-full items-center mt-24">
-            <Loader2 className="h-32 w-32 animate-spin text-gray-500" />
-            <div className="text-2xl">Loading your files...</div>
-          </div>
-        )}
 
         <TabsContent value="grid">
           <div className="grid grid-cols-3 gap-4">

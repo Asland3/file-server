@@ -18,14 +18,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Protect } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import {
-  FileIcon,
-  MoreVertical,
-  StarHalf,
-  StarIcon,
-  TrashIcon,
-  UndoIcon,
-} from "lucide-react";
+import { FileIcon, MoreVertical, TrashIcon, UndoIcon } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
@@ -96,16 +90,36 @@ export function FileCardActions({
               toggleFavorite({
                 fileId: file._id,
               });
+              if (isFavorited) {
+                toast({
+                  variant: "default",
+                  title: "File unfavorited",
+                  description: "This file has been removed from your favorites",
+                });
+              } else {
+                toast({
+                  variant: "default",
+                  title: "File favorited",
+                  description: "This file has been added to your favorites",
+                });
+              }
             }}
             className="flex gap-1 items-center cursor-pointer"
           >
             {isFavorited ? (
-              <div className="flex gap-1 items-center">
-                <StarIcon className="w-4 h-4" /> Unfavorite
+              <div className="flex gap-1 items-center ml-[-2px]">
+                <Image
+                  src="/star-filled.svg"
+                  width={20}
+                  height={20}
+                  alt="Unfavorite"
+                />
+                Unfavorite
               </div>
             ) : (
-              <div className="flex gap-1 items-center">
-                <StarHalf className="w-4 h-4" /> Favorite
+              <div className="flex gap-1 items-center ml-[-2px]">
+                <Image src="/star.svg" width={20} height={20} alt="Favorite" />
+                Favorite
               </div>
             )}
           </DropdownMenuItem>
@@ -118,7 +132,14 @@ export function FileCardActions({
                 }) || file.userId === me?._id
               );
             }}
-            fallback={<></>}
+            fallback={
+              <DropdownMenuItem
+                className="flex gap-1 items-center text-red-600"
+                disabled
+              >
+                <TrashIcon className="w-4 h-4" /> Delete
+              </DropdownMenuItem>
+            }
           >
             <DropdownMenuSeparator />
             <DropdownMenuItem

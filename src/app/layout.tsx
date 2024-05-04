@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { Footer } from "./footer";
 import { Header } from "./header";
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ConvexClientProvider>
+          <NextTopLoader showSpinner={false} />
           <Header />
           {children}
           <Footer />
