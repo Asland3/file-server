@@ -36,7 +36,7 @@ function SearchBar({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setQuery(values.query)
+    setQuery(values.query);
   }
 
   return (
@@ -54,9 +54,14 @@ function SearchBar({
                 <FormControl>
                   <Input
                     className="text-black"
-                    // type=""
                     {...field}
                     placeholder="Search for files"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      if (e.target.value === "") {
+                        setQuery(e.target.value);
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

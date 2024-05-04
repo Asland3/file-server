@@ -36,7 +36,7 @@ export function FileCard({
       <CardHeader className="relative">
         <CardTitle className="flex gap-2 text-base font-normal">
           <div className="flex justify-center">{typeIcons[file.type]}</div>{" "}
-          {file.name}
+          <p className="truncate">{file.name}</p>
         </CardTitle>
         <div className="absolute top-2 right-2">
           <FileCardActions isFavorited={file.isFavorited} file={file} />

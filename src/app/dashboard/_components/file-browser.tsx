@@ -72,7 +72,6 @@ export function FileBrowser({
         }
       : "skip"
   );
-  const isLoading = files === undefined;
 
   const modifiedFiles =
     files?.map((file) => ({

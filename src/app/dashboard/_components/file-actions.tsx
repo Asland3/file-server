@@ -24,6 +24,21 @@ import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
 
+export async function downloladFile(
+  file: Doc<"files"> & { url: string | null }
+) {
+  if (!file.url) return;
+  const response = fetch(file.url);
+  const blob = (await response).blob();
+  const url = window.URL.createObjectURL(await blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "file");
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode?.removeChild(link);
+}
+
 export function FileCardActions({
   file,
   isFavorited,
@@ -76,9 +91,8 @@ export function FileCardActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => {
-              if (!file.url) return;
-              window.open(file.url, "_blank");
+            onClick={async () => {
+              downloladFile(file);
             }}
             className="flex gap-1 items-center cursor-pointer"
           >
