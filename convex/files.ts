@@ -140,13 +140,19 @@ export const getFiles = query({
 export const deleteAllFiles = internalMutation({
   args: {},
   async handler(ctx) {
+    const oneDayAgo = new Date(Date.now() - 1000 * 60 * 60 * 24);
+
     const files = await ctx.db
       .query("files")
       .withIndex("by_shouldDelete", (q) => q.eq("shouldDelete", true))
       .collect();
 
+    const filesToDelete = files.filter(
+      (file) => new Date(file.markedForDeletionAt!) <= oneDayAgo
+    );
+
     await Promise.all(
-      files.map(async (file) => {
+      filesToDelete.map(async (file) => {
         await ctx.storage.delete(file.fileId);
         return await ctx.db.delete(file._id);
       })
@@ -177,6 +183,7 @@ export const deleteFile = mutation({
 
     await ctx.db.patch(args.fileId, {
       shouldDelete: true,
+      markedForDeletionAt: Date.now(),
     });
   },
 });
@@ -223,10 +230,8 @@ export const toggleFavorite = mutation({
         userId: access.user._id,
         orgId: access.file.orgId,
       });
-      return "added"
     } else {
       await ctx.db.delete(favorite._id);
-      return "removed"
     }
   },
 });

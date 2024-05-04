@@ -31,6 +31,13 @@ export function FileCard({
     csv: <GanttChartIcon />,
   } as Record<Doc<"files">["type"], ReactNode>;
 
+  let deletionTimeText = "";
+
+  if (file.shouldDelete) {
+    const deletionTime = file.markedForDeletionAt! + 24 * 60 * 60 * 1000; // 24 hours after the file was marked for deletion
+    deletionTimeText = `File will be deleted ${formatRelative(deletionTime, new Date())}`;
+  }
+
   return (
     <Card>
       <CardHeader className="relative">
@@ -44,22 +51,37 @@ export function FileCard({
       </CardHeader>
       <CardContent className="h-[200px] flex justify-center items-center">
         {file.type === "image" && file.url && (
-          <Image alt={file.name} width="200" height="100" src={file.url} priority/>
+          <Image
+            alt={file.name}
+            width="200"
+            height="100"
+            src={file.url}
+            priority
+          />
         )}
 
         {file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
         {file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="flex gap-2 text-xs text-gray-700 w-40 items-center">
-          <Avatar className="w-6 h-6">
-            <AvatarImage src={userProfile?.image} />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          {userProfile?.name}
+      <CardFooter className="flex flex-col justify-between">
+        <div className="flex justify-between">
+          <div className="flex gap-2 text-xs text-gray-700 w-40 items-center">
+            <Avatar className="w-6 h-6">
+              <AvatarImage src={userProfile?.image} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            {userProfile?.name}
+          </div>
+          <div className="text-xs text-gray-700 flex items-center">
+            Uploaded {formatRelative(new Date(file._creationTime), new Date())}
+          </div>
         </div>
-        <div className="text-xs text-gray-700">
-          Uploaded on {formatRelative(new Date(file._creationTime), new Date())}
+        <div className="pt-5">
+          {file.shouldDelete && (
+            <div className="text-sm text-gray-700 font-bold">
+              {deletionTimeText}
+            </div>
+          )}
         </div>
       </CardFooter>
     </Card>

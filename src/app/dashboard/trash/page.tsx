@@ -3,7 +3,7 @@ import { FileBrowser } from "../_components/file-browser";
 function Trash() {
   return (
     <div>
-      <FileBrowser title="Favorites" deletedOnly />
+      <FileBrowser title="Trash" deletedOnly />
     </div>
   );
 }

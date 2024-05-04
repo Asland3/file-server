@@ -101,24 +101,28 @@ export function FileCardActions({
 
           <DropdownMenuItem
             onClick={() => {
-              toggleFavorite({
-                fileId: file._id,
-              });
-              if (isFavorited) {
-                toast({
-                  variant: "default",
-                  title: "File unfavorited",
-                  description: "This file has been removed from your favorites",
+              if (!file.shouldDelete) {
+                toggleFavorite({
+                  fileId: file._id,
                 });
-              } else {
-                toast({
-                  variant: "default",
-                  title: "File favorited",
-                  description: "This file has been added to your favorites",
-                });
+                if (isFavorited) {
+                  toast({
+                    variant: "default",
+                    title: "File unfavorited",
+                    description:
+                      "This file has been removed from your favorites",
+                  });
+                } else {
+                  toast({
+                    variant: "default",
+                    title: "File favorited",
+                    description: "This file has been added to your favorites",
+                  });
+                }
               }
             }}
             className="flex gap-1 items-center cursor-pointer"
+            disabled={file.shouldDelete}
           >
             {isFavorited ? (
               <div className="flex gap-1 items-center ml-[-2px]">
