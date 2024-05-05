@@ -12,7 +12,7 @@ import { useOrganization, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { GridIcon, RowsIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { columns } from "./columns";
@@ -81,6 +81,14 @@ export function FileBrowser({
       ),
     })) ?? [];
 
+  const [tabValue, setTabValue] = useState(
+    localStorage.getItem("tabValue") ?? "grid"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("tabValue", tabValue);
+  }, [tabValue]);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -91,14 +99,22 @@ export function FileBrowser({
         <UploadButton />
       </div>
 
-      <Tabs defaultValue="grid">
+      <Tabs defaultValue={tabValue}>
         <div className="flex justify-between items-center">
           <TabsList className="mb-2">
-            <TabsTrigger value="grid" className="flex gap-2 items-center">
+            <TabsTrigger
+              value="grid"
+              className="flex gap-2 items-center"
+              onClick={() => setTabValue("grid")}
+            >
               <GridIcon />
               Grid
             </TabsTrigger>
-            <TabsTrigger value="table" className="flex gap-2 items-center">
+            <TabsTrigger
+              value="table"
+              className="flex gap-2 items-center"
+              onClick={() => setTabValue("table")}
+            >
               <RowsIcon /> Table
             </TabsTrigger>
           </TabsList>
