@@ -49,9 +49,10 @@ export function FileCard({
           <FileCardActions isFavorited={file.isFavorited} file={file} />
         </div>
       </CardHeader>
-      <CardContent className="h-[200px] flex justify-center items-center">
+      <CardContent className="h-[200px] flex justify-center items-center mb-2 mt-2">
         {file.type === "image" && file.url && (
           <Image
+            className="rounded-md "
             alt={file.name}
             width="200"
             height="100"
