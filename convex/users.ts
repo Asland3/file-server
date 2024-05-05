@@ -1,5 +1,10 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, internalMutation, query } from "./_generated/server";
+import {
+  MutationCtx,
+  QueryCtx,
+  internalMutation,
+  query,
+} from "./_generated/server";
 import { roles } from "./schema";
 
 export async function getUser(

@@ -134,7 +134,7 @@ export function FileCardActions({
                 />
                 Unfavorite
               </div>
-              ) : (
+            ) : (
               <div className="flex gap-1 items-center ml-[-2px]">
                 <Image src="/star.svg" width={20} height={20} alt="Favorite" />
                 Favorite
