@@ -4,8 +4,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import ConvexClientProvider from "./ConvexClientProvider";
-import { Header } from "./header";
 import Footer from "./footer";
+import { Header } from "./header";
+import Transition from "./transition";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ export default function RootLayout({
         <ConvexClientProvider>
           <NextTopLoader showSpinner={false} />
           <Header />
-          {children}
+          <Transition>{children}</Transition>
           <Footer />
           <Toaster />
         </ConvexClientProvider>
