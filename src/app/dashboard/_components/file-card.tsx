@@ -42,7 +42,7 @@ export function FileCard({
     <Card>
       <CardHeader className="relative">
         <CardTitle className="flex gap-2 text-base font-normal">
-          <div className="flex justify-center">{typeIcons[file.type]}</div>{" "}
+          <div className="flex justify-center">{typeIcons[file.type]}</div>
           <p className="truncate">{file.name}</p>
         </CardTitle>
         <div className="absolute top-2 right-2">
@@ -52,10 +52,10 @@ export function FileCard({
       <CardContent className="h-[200px] flex justify-center items-center mb-2 mt-2">
         {file.type === "image" && file.url && (
           <Image
-            className="rounded-md "
+            className="rounded-md max-h-[200px] max-w-[200px]"
             alt={file.name}
-            width="200"
-            height="100"
+            width={200}
+            height={200}
             src={file.url}
             priority
           />
